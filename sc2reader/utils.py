@@ -24,17 +24,24 @@ class DepotFile(object):
 
     def __init__(self, bytes):
         #: The server the file is hosted on
-        self.server = bytes[4:8].decode("utf-8").strip("\x00 ")
+        try:
+            self.server = bytes[4:8].decode("utf-8").strip("\x00 ")
 
-        # There is no SEA depot, use US instead
-        if self.server == "SEA":
+            # There is no SEA depot, use US instead
+            if self.server == "SEA":
+                self.server = "US"
+
+
+            #: The unique content based hash of the file
+            self.hash = binascii.b2a_hex(bytes[8:]).decode("utf8")
+
+            #: The extension of the file on the server
+            self.type = bytes[0:4].decode("utf8")
+        except Exception as e:
+            print(" US server forced ? ")
             self.server = "US"
-
-        #: The unique content based hash of the file
-        self.hash = binascii.b2a_hex(bytes[8:]).decode("utf8")
-
-        #: The extension of the file on the server
-        self.type = bytes[0:4].decode("utf8")
+            self.server = "hash"
+            self.type = "bulshit"
 
     @property
     def url(self):

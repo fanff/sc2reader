@@ -63,7 +63,8 @@ class ContextLoader(object):
             self.logger.error("Other unit {0} not found".format(event.other_unit_id))
 
     def handleTargetUnitCommandEvent(self, event, replay):
-        self.last_target_ability_event[event.player.pid] = event
+        if event.player:
+            self.last_target_ability_event[event.player.pid] = event
 
         if not replay.datapack:
             return
@@ -90,7 +91,7 @@ class ContextLoader(object):
         # We may not find a TargetUnitCommandEvent before finding an
         # UpdateTargetUnitCommandEvent, perhaps due to Missing Abilities in the
         # datapack
-        if event.player.pid in self.last_target_ability_event:
+        if event.player and event.player.pid in self.last_target_ability_event:
             # store corresponding TargetUnitCommandEvent data in this event
             # currently using for *MacroTracker only, so only need ability name
             event.ability_name = self.last_target_ability_event[

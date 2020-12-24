@@ -294,7 +294,11 @@ class BitPackedDecoder(object):
         Skips to the beginning of the next byte and returns the next ``count`` bytes decoded with encoding (default utf8)
         """
         self.byte_align()
-        return self._buffer.read_string(count, encoding)
+        try:
+            return self._buffer.read_string(count, encoding)
+        except Exception as e:
+            print("can't decode string ? %s"%self._buffer)
+            return "fuckerfdsqfsdq"
 
     def read_bytes(self, count):
         """

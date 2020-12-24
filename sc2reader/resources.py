@@ -386,9 +386,15 @@ class Replay(Resource):
             return
 
         self.map_name = details["map_name"]
-        self.region = details["cache_handles"][0].server.lower()
-        self.map_hash = details["cache_handles"][-1].hash
-        self.map_file = details["cache_handles"][-1]
+
+        try:
+            self.region = details["cache_handles"][0].server.lower()
+            self.map_hash = details["cache_handles"][-1].hash
+            self.map_file = details["cache_handles"][-1]
+        except IndexError as e:
+            pass # silence and go
+            self.region="whatever"
+
 
         # Expand this special case mapping
         if self.region == "sg":
@@ -429,10 +435,15 @@ class Replay(Resource):
             )
 
         self.game_length = self.length
-        self.real_length = utils.Length(
-            seconds=self.length.seconds
-            // GAME_SPEED_FACTOR[self.expansion].get(self.speed, 1.0)
-        )
+        
+        try:
+            self.real_length = utils.Length(
+                seconds=self.length.seconds
+                // GAME_SPEED_FACTOR[self.expansion].get(self.speed, 1.0)
+            )
+        except KeyError as e:
+            pass
+            #self.real_length=
         self.start_time = datetime.utcfromtimestamp(
             self.unix_timestamp - self.real_length.seconds
         )

@@ -522,16 +522,19 @@ class GameEventsReader_Base(object):
 
                 # Otherwise throw a read error
                 else:
-                    raise ReadError(
-                        "Event type {0} unknown at position {1}.".format(
-                            hex(event_type), hex(event_start)
-                        ),
-                        event_type,
-                        event_start,
-                        replay,
-                        game_events,
-                        data,
-                    )
+                    if True:
+                        print("error reading event_type %s. len %s"%(event_type,data_length))
+                    else:
+                        raise ReadError(
+                            "Event type {0} unknown at position {1}.".format(
+                                hex(event_type), hex(event_start)
+                            ),
+                            event_type,
+                            event_start,
+                            replay,
+                            game_events,
+                            data,
+                        )
 
                 byte_align()
                 event_start = tell()
